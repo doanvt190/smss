@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration.Json;
 using System;
 using System.IO;
 using BCrypt.Net;
-
 namespace HashTest
 {
     internal class UserCreationAndPasswordHash
