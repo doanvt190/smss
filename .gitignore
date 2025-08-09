@@ -6,3 +6,4 @@ WebSIMS/obj/WebSIMS.csproj.nuget.dgspec.json
 WebSIMS/obj/Debug/net8.0/WebSIMS.GeneratedMSBuildEditorConfig.editorconfig
 WebSIMS/obj/WebSIMS.csproj.nuget.g.props
 /.vs/WebSIMS
+/WebSIMS/appsettings.json
