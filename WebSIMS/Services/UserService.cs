@@ -1,5 +1,6 @@
 ﻿using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
+using BCrypt.Net;
 
 namespace WebSIMS.Services
 {
@@ -15,7 +16,7 @@ namespace WebSIMS.Services
             var user = await _userRepository.GetUserByUsername(username);
             if (user == null) return null;
 
-            return user.PasswordHash.Equals(password) ? user : null;
+            return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash) ? user : null;
         }
 
         public async Task<Users?> GetUserByUsernameAsync(string username)

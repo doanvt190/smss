@@ -7,7 +7,7 @@ using BCrypt.Net;
 
 namespace HashTest
 {
-    internal class Program
+    internal class UserCreationAndPasswordHash
     {
         static void Main(string[] args)
         {
@@ -25,9 +25,14 @@ namespace HashTest
             }
 
             // --- User Details ---
-            var username = "admin";
-            var password = "AdminPassword123"; // Choose a strong password
-            var role = "Admin";
+            Console.Write("Enter username: ");
+            var username = Console.ReadLine();
+
+            Console.Write("Enter password: ");
+            var password = Console.ReadLine();
+
+            Console.Write("Enter role: ");
+            var role = Console.ReadLine();
             // --- End User Details ---
 
             // Hash the password
