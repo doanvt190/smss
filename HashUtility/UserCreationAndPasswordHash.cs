@@ -5,12 +5,13 @@ using System;
 using System.IO;
 using BCrypt.Net;
 
-namespace HashTest
+namespace HashUtility
 {
     internal class UserCreationAndPasswordHash
     {
         static void Main(string[] args)
         {
+            ArgumentNullException.ThrowIfNull(args);
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
@@ -40,47 +41,45 @@ namespace HashTest
 
             try
             {
-                using (var connection = new SqlConnection(connectionString))
+                using var connection = new SqlConnection(connectionString);
+                connection.Open();
+                Console.WriteLine("Database connection successful.");
+
+                // Check if the user already exists
+                var checkUserCmd = new SqlCommand("SELECT COUNT(1) FROM Users WHERE Username = @Username", connection);
+                checkUserCmd.Parameters.AddWithValue("@Username", username);
+
+                var userExists = (int)checkUserCmd.ExecuteScalar() > 0;
+
+                if (userExists)
                 {
-                    connection.Open();
-                    Console.WriteLine("Database connection successful.");
-
-                    // Check if the user already exists
-                    var checkUserCmd = new SqlCommand("SELECT COUNT(1) FROM Users WHERE Username = @Username", connection);
-                    checkUserCmd.Parameters.AddWithValue("@Username", username);
-
-                    var userExists = (int)checkUserCmd.ExecuteScalar() > 0;
-
-                    if (userExists)
+                    Console.WriteLine($"User '{username}' already exists. Do you want to update the password? (y/n)");
+                    var response = Console.ReadKey(true).KeyChar;
+                    if (response == 'y' || response == 'Y')
                     {
-                        Console.WriteLine($"User '{username}' already exists. Do you want to update the password? (y/n)");
-                        var response = Console.ReadKey(true).KeyChar;
-                        if (response == 'y' || response == 'Y')
-                        {
-                            var updateUserCmd = new SqlCommand("UPDATE Users SET PasswordHash = @PasswordHash, Role = @Role WHERE Username = @Username", connection);
-                            updateUserCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
-                            updateUserCmd.Parameters.AddWithValue("@Role", role);
-                            updateUserCmd.Parameters.AddWithValue("@Username", username);
-                            updateUserCmd.ExecuteNonQuery();
-                            Console.WriteLine($"Password for user '{username}' has been updated successfully.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Update cancelled.");
-                        }
+                        var updateUserCmd = new SqlCommand("UPDATE Users SET PasswordHash = @PasswordHash, Role = @Role WHERE Username = @Username", connection);
+                        updateUserCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                        updateUserCmd.Parameters.AddWithValue("@Role", role);
+                        updateUserCmd.Parameters.AddWithValue("@Username", username);
+                        updateUserCmd.ExecuteNonQuery();
+                        Console.WriteLine($"Password for user '{username}' has been updated successfully.");
                     }
                     else
                     {
-                        // Insert the new user
-                        var insertUserCmd = new SqlCommand("INSERT INTO Users (Username, PasswordHash, Role, CreatedAt) VALUES (@Username, @PasswordHash, @Role, @CreatedAt)", connection);
-                        insertUserCmd.Parameters.AddWithValue("@Username", username);
-                        insertUserCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
-                        insertUserCmd.Parameters.AddWithValue("@Role", role);
-                        insertUserCmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
-
-                        insertUserCmd.ExecuteNonQuery();
-                        Console.WriteLine($"User '{username}' created successfully with a hashed password.");
+                        Console.WriteLine("Update cancelled.");
                     }
+                }
+                else
+                {
+                    // Insert the new user
+                    var insertUserCmd = new SqlCommand("INSERT INTO Users (Username, PasswordHash, Role, CreatedAt) VALUES (@Username, @PasswordHash, @Role, @CreatedAt)", connection);
+                    insertUserCmd.Parameters.AddWithValue("@Username", username);
+                    insertUserCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                    insertUserCmd.Parameters.AddWithValue("@Role", role);
+                    insertUserCmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
+
+                    insertUserCmd.ExecuteNonQuery();
+                    Console.WriteLine($"User '{username}' created successfully with a hashed password.");
                 }
             }
             catch (Exception ex)
