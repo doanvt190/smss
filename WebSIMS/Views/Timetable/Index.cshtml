@@ -100,18 +100,22 @@
                                     else
                                     {
                                         <td class="table-light">
-                                            <div class="p-2 text-muted text-center">
-                                                <small><i class="fas fa-plus text-muted"></i><br>Add Schedule</small>
-                                                @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
-                                                {
+                                            @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+                                            {
+                                                <div class="p-2 text-muted text-center">
+                                                    <small><i class="fas fa-plus text-muted"></i><br>Add Schedule</small>
                                                     <div class="mt-1">
-                                                        <a asp-action="Create" class="btn btn-outline-primary btn-sm" 
+                                                        <a asp-action="Create" class="btn btn-outline-primary btn-sm"
                                                            title="Add schedule for @day - @timeSlot">
                                                             <i class="fas fa-plus"></i>
                                                         </a>
                                                     </div>
-                                                }
-                                            </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="p-2"></div>
+                                            }
                                         </td>
                                     }
                                 }
