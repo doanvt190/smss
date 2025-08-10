@@ -4,3 +4,7 @@
 /HashUtility/obj
 /HashUtility/bin
 /.vs
+HashUtility/appsettings.json
+WebSIMS/appsettings.json
+HashUtility/appsettings.json
+WebSIMS/appsettings.json
