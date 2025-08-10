@@ -1,0 +1,72 @@
+@model WebSIMS.Models.EnrollStudentViewModel
+
+@{
+    ViewData["Title"] = "Enroll Student in Class";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Enroll Student in Class</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Class" asp-action="Index">Classes</a></li>
+        <li class="breadcrumb-item active">Enroll Student</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-user-plus me-1"></i>
+            Enroll Student in @ViewBag.ClassName
+        </div>
+        <div class="card-body">
+            <form asp-action="Enroll" method="post">
+                @Html.AntiForgeryToken()
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="StudentID" class="form-label"></label>
+                            <select asp-for="StudentID" asp-items="Model.Students" class="form-select">
+                                <option value="">-- Select Student --</option>
+                            </select>
+                            <span asp-validation-for="StudentID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" asp-items="Model.StatusOptions" class="form-select">
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Enrollments" asp-route-id="@Model.ClassID" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Enrollments
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Enroll Student
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
