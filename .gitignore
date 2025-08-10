@@ -48,6 +48,7 @@ project.assets.json
 # Other
 *.log
 *.tmp
+<<<<<<< HEAD
 *.bak
 /WebSIMS/obj
 /WebSIMS/bin
@@ -58,3 +59,6 @@ project.assets.json
 /obj
 /HashUtility/appsettings.json
 /WebSIMS/appsettings.json
+=======
+*.bak
+>>>>>>> parent of 1ec7dcb (.gitignore is now working)
