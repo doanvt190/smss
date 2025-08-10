@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
 using WebSIMS.Models;
-using System.Security.Cryptography;
-using System.Text;
+using BCrypt.Net;
 
 namespace WebSIMS.Controllers
 {
@@ -69,7 +68,7 @@ namespace WebSIMS.Controllers
                     var user = new Users
                     {
                         Username = model.Username,
-                        PasswordHash = HashPassword(model.Password),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                         Role = "Student",
                         CreatedAt = DateTime.Now
                     };
@@ -230,11 +229,7 @@ namespace WebSIMS.Controllers
 
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
     }
-} 
+}
