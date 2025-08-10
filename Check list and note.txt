@@ -1,0 +1,4 @@
+Check list and note
+
+Password hash✅
+Password hash converted back into normal password in handling✅
