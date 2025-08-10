@@ -1,0 +1,51 @@
+# User-specific files
+appsettings.json
+appsettings.*.json
+
+# Secrets
+secrets.json
+secrets.*.json
+
+# Binaries
+bin/
+obj/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vspscc
+/packages
+/TestResults
+/tools/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Dotnet
+project.lock.json
+project.assets.json
+/artifacts
+
+# Other
+*.log
+*.tmp
+*.bak
