@@ -1,4 +1,4 @@
-@model WebSIMS.Models.CreateStudentViewModel
+@model WebSIMS.Models.EditStudentViewModel
 
 @{
     ViewData["Title"] = "Edit Student";
@@ -22,6 +22,7 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="StudentID" />
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                         <div class="row">
@@ -30,9 +31,8 @@
                                     <label asp-for="Username" class="form-label"></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                        <input asp-for="Username" class="form-control" readonly />
+                                        <input asp-for="Username" class="form-control" />
                                     </div>
-                                    <small class="text-muted">Username cannot be changed</small>
                                     <span asp-validation-for="Username" class="text-danger"></span>
                                 </div>
                             </div>
@@ -165,10 +165,9 @@
                     <div class="alert alert-info">
                         <h6><i class="fas fa-lightbulb me-1"></i>Tips:</h6>
                         <ul class="mb-0">
-                            <li>Username and password cannot be changed from this form</li>
-                            <li>Email address must be unique</li>
-                            <li>All required fields are marked with *</li>
-                            <li>Changes will be saved immediately</li>
+                            <li>Username can be changed, but must be unique.</li>
+                            <li>Password cannot be changed from this form.</li>
+                            <li>Email address must be unique.</li>
                         </ul>
                     </div>
                     
@@ -229,4 +228,4 @@
         background-color: #e9ecef;
         opacity: 1;
     }
-</style> 
+</style></style> 

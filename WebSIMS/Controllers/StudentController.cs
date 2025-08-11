@@ -139,8 +139,9 @@ namespace WebSIMS.Controllers
                 return NotFound();
             }
 
-            var viewModel = new CreateStudentViewModel
+            var viewModel = new EditStudentViewModel
             {
+                StudentID = student.StudentID,
                 Username = student.User.Username,
                 FirstName = student.FirstName,
                 LastName = student.LastName,
@@ -159,29 +160,51 @@ namespace WebSIMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")] // Only Admin can update students
-        public async Task<IActionResult> Edit(int id, CreateStudentViewModel model)
+        public async Task<IActionResult> Edit(int id, EditStudentViewModel model)
         {
+            if (id != model.StudentID)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var student = await _studentRepository.GetStudentByIdAsync(id);
-                    if (student == null)
+                    var studentToUpdate = await _studentRepository.GetStudentByIdAsync(id);
+                    if (studentToUpdate == null)
                     {
                         return NotFound();
                     }
 
-                    // Update student properties
-                    student.FirstName = model.FirstName;
-                    student.LastName = model.LastName;
-                    student.DateOfBirth = model.DateOfBirth;
-                    student.Gender = model.Gender;
-                    student.Email = model.Email;
-                    student.Phone = model.Phone;
-                    student.Address = model.Address;
-                    student.Program = model.Program;
+                    // Check if username is being changed and if the new one already exists
+                    if (studentToUpdate.User.Username != model.Username && await _studentRepository.UsernameExistsAsync(model.Username))
+                    {
+                        ModelState.AddModelError("Username", "Username already exists.");
+                        return View(model);
+                    }
 
-                    var success = await _studentRepository.UpdateStudentAsync(student);
+                    // Check if email is being changed and if the new one already exists
+                    if (studentToUpdate.Email != model.Email && await _studentRepository.StudentExistsAsync(model.Email))
+                    {
+                        ModelState.AddModelError("Email", "Email already exists.");
+                        return View(model);
+                    }
+
+                    // Update user properties
+                    studentToUpdate.User.Username = model.Username;
+
+                    // Update student properties
+                    studentToUpdate.FirstName = model.FirstName;
+                    studentToUpdate.LastName = model.LastName;
+                    studentToUpdate.DateOfBirth = model.DateOfBirth;
+                    studentToUpdate.Gender = model.Gender;
+                    studentToUpdate.Email = model.Email;
+                    studentToUpdate.Phone = model.Phone;
+                    studentToUpdate.Address = model.Address;
+                    studentToUpdate.Program = model.Program;
+
+                    var success = await _studentRepository.UpdateStudentAsync(studentToUpdate);
                     if (success)
                     {
                         TempData["SuccessMessage"] = "Student updated successfully!";
