@@ -59,7 +59,7 @@ namespace WebSIMS.Controllers
                 {
                     WeekStart = weekStart,
                     WeekEnd = weekStart.AddDays(6),
-                    TimetableData = timetableData.ToList()
+                    TimetableData = [.. timetableData]
                 };
 
                 // Build timetable grid
@@ -84,7 +84,7 @@ namespace WebSIMS.Controllers
                 var classes = await _classRepository.GetAllClassesAsync();
                 var viewModel = new CreateTimetableViewModel
                 {
-                    AvailableClasses = classes.ToList()
+                    AvailableClasses = [.. classes]
                 };
 
                 return View(viewModel);
@@ -148,7 +148,7 @@ namespace WebSIMS.Controllers
             try
             {
                 var classes = await _classRepository.GetAllClassesAsync();
-                model.AvailableClasses = classes.ToList();
+                model.AvailableClasses = [.. classes];
             }
             catch (Exception ex)
             {
@@ -180,7 +180,7 @@ namespace WebSIMS.Controllers
                     StartTime = schedule.StartTime,
                     EndTime = schedule.EndTime,
                     Room = schedule.Room,
-                    AvailableClasses = classes.ToList()
+                    AvailableClasses = [.. classes]
                 };
 
                 return View(viewModel);
@@ -235,7 +235,7 @@ namespace WebSIMS.Controllers
             try
             {
                 var classes = await _classRepository.GetAllClassesAsync();
-                model.AvailableClasses = classes.ToList();
+                model.AvailableClasses = [.. classes];
             }
             catch
             {
