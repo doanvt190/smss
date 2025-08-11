@@ -5,6 +5,7 @@ using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
 using WebSIMS.Models;
 using BCrypt.Net;
+using System.Security.Claims;
 
 namespace WebSIMS.Controllers
 {
@@ -12,19 +13,48 @@ namespace WebSIMS.Controllers
     public class StudentController : Controller
     {
         private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
 
-        public StudentController(IStudentRepository studentRepository)
+        public StudentController(IStudentRepository studentRepository, IUserRepository userRepository)
         {
             _studentRepository = studentRepository;
+            _userRepository = userRepository;
         }
 
         // GET: Student
-        [Authorize(Roles = "Admin,Student,Faculty")] // All authenticated users can view the list
+        [Authorize(Roles = "Admin,Faculty")] // All authenticated users can view the list
         public async Task<IActionResult> Index()
         {
             try
             {
-                var students = await _studentRepository.GetAllStudentsAsync();
+                var username = User.Identity.Name;
+                var user = await _userRepository.GetUserByUsername(username);
+
+                if (user == null)
+                {
+                    return Challenge(); // or handle as appropriate
+                }
+
+                if (User.IsInRole("Student"))
+                {
+                    var student = await _studentRepository.GetStudentByUserIdAsync(user.UserID);
+                    if (student == null)
+                    {
+                        return NotFound();
+                    }
+                    return RedirectToAction(nameof(Details), new { id = student.StudentID });
+                }
+
+                IEnumerable<StudentListViewModel> students;
+                if (User.IsInRole("Faculty"))
+                {
+                    students = await _studentRepository.GetStudentsByFacultyUserIdAsync(user.UserID);
+                }
+                else // Admin
+                {
+                    students = await _studentRepository.GetAllStudentsAsync();
+                }
+
                 return View(students);
             }
             catch (Exception ex)
@@ -105,26 +135,51 @@ namespace WebSIMS.Controllers
         [Authorize(Roles = "Admin,Student,Faculty")] // All authenticated users can view details
         public async Task<IActionResult> Details(int id)
         {
-            var student = await _studentRepository.GetStudentByIdAsync(id);
-            if (student == null)
+            var username = User.Identity.Name;
+            var user = await _userRepository.GetUserByUsername(username);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                var student = await _studentRepository.GetStudentByUserIdAsync(user.UserID);
+                if (student == null || student.StudentID != id)
+                {
+                    return Forbid();
+                }
+            }
+            else if (User.IsInRole("Faculty"))
+            {
+                var isAuthorized = await _studentRepository.IsStudentInFacultyClassesAsync(id, user.UserID);
+                if (!isAuthorized)
+                {
+                    return Forbid();
+                }
+            }
+
+
+            var studentDetails = await _studentRepository.GetStudentByIdAsync(id);
+            if (studentDetails == null)
             {
                 return NotFound();
             }
 
             var viewModel = new StudentListViewModel
             {
-                StudentID = student.StudentID,
-                Username = student.User.Username,
-                FirstName = student.FirstName,
-                LastName = student.LastName,
-                DateOfBirth = student.DateOfBirth,
-                Gender = student.Gender,
-                Email = student.Email,
-                Phone = student.Phone,
-                Address = student.Address,
-                EnrollmentDate = student.EnrollmentDate,
-                Program = student.Program,
-                CreatedAt = student.User.CreatedAt
+                StudentID = studentDetails.StudentID,
+                Username = studentDetails.User.Username,
+                FirstName = studentDetails.FirstName,
+                LastName = studentDetails.LastName,
+                DateOfBirth = studentDetails.DateOfBirth,
+                Gender = studentDetails.Gender,
+                Email = studentDetails.Email,
+                Phone = studentDetails.Phone,
+                Address = studentDetails.Address,
+                EnrollmentDate = studentDetails.EnrollmentDate,
+                Program = studentDetails.Program,
+                CreatedAt = studentDetails.User.CreatedAt
             };
 
             return View(viewModel);

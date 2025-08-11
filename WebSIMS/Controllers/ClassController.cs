@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
 using WebSIMS.Models;
+using System.Security.Claims;
 
 namespace WebSIMS.Controllers
 {
@@ -11,10 +12,12 @@ namespace WebSIMS.Controllers
     public class ClassController : Controller
     {
         private readonly IClassRepository _classRepository;
-
-        public ClassController(IClassRepository classRepository)
+        private readonly IUserRepository _userRepository;
+    
+        public ClassController(IClassRepository classRepository, IUserRepository userRepository)
         {
             _classRepository = classRepository;
+            _userRepository = userRepository;
         }
 
         // GET: Class
@@ -23,7 +26,28 @@ namespace WebSIMS.Controllers
         {
             try
             {
-                var classes = await _classRepository.GetAllClassesAsync();
+                var username = User.Identity.Name;
+                var user = await _userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    return Challenge();
+                }
+
+                IEnumerable<ClassListViewModel> classes;
+
+                if (User.IsInRole("Student"))
+                {
+                    classes = await _classRepository.GetClassesByStudentUserIdAsync(user.UserID);
+                }
+                else if (User.IsInRole("Faculty"))
+                {
+                    classes = await _classRepository.GetClassesByFacultyUserIdAsync(user.UserID);
+                }
+                else // Admin
+                {
+                    classes = await _classRepository.GetAllClassesAsync();
+                }
+
                 return View(classes);
             }
             catch (Exception ex)
@@ -130,6 +154,30 @@ namespace WebSIMS.Controllers
         [Authorize(Roles = "Admin,Student,Faculty")] // All authenticated users can view details
         public async Task<IActionResult> Details(int id)
         {
+            var username = User.Identity.Name;
+            var user = await _userRepository.GetUserByUsername(username);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                var isEnrolled = await _classRepository.IsStudentEnrolledInClassByUserIdAsync(user.UserID, id);
+                if (!isEnrolled)
+                {
+                    return Forbid();
+                }
+            }
+            else if (User.IsInRole("Faculty"))
+            {
+                var isAssigned = await _classRepository.IsFacultyAssignedToClassByUserIdAsync(user.UserID, id);
+                if (!isAssigned)
+                {
+                    return Forbid();
+                }
+            }
+
             var classEntity = await _classRepository.GetClassByIdAsync(id);
             if (classEntity == null)
             {
@@ -421,4 +469,4 @@ namespace WebSIMS.Controllers
             return RedirectToAction(nameof(Enrollments), new { id = classId });
         }
     }
-} 
+}

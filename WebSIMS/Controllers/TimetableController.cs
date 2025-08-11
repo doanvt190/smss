@@ -4,6 +4,7 @@ using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
 using WebSIMS.Models;
 using System.Linq;
+using System.Security.Claims;
 
 namespace WebSIMS.Controllers
 {
@@ -12,11 +13,13 @@ namespace WebSIMS.Controllers
     {
         private readonly ITimetableRepository _timetableRepository;
         private readonly IClassRepository _classRepository;
+        private readonly IUserRepository _userRepository;
 
-        public TimetableController(ITimetableRepository timetableRepository, IClassRepository classRepository)
+        public TimetableController(ITimetableRepository timetableRepository, IClassRepository classRepository, IUserRepository userRepository)
         {
             _timetableRepository = timetableRepository;
             _classRepository = classRepository;
+            _userRepository = userRepository;
         }
 
         // GET: Timetable
@@ -25,9 +28,31 @@ namespace WebSIMS.Controllers
         {
             try
             {
+                var username = User.Identity.Name;
+                var user = await _userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    return Challenge();
+                }
+
                 var weekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
-                var timetableData = await _timetableRepository.GetTimetableDataAsync();
                 
+                IEnumerable<TimetableViewModel> timetableData;
+
+                if (User.IsInRole("Student"))
+                {
+                    timetableData = await _timetableRepository.GetTimetableDataByStudentUserIdAsync(user.UserID);
+                }
+                else if (User.IsInRole("Faculty"))
+                {
+                    timetableData = await _timetableRepository.GetTimetableDataByFacultyUserIdAsync(user.UserID);
+                }
+                else // Admin
+                {
+                    timetableData = await _timetableRepository.GetTimetableDataAsync();
+                }
+
+
                 Console.WriteLine($"Loaded {timetableData.Count()} timetable entries");
                 
                 var viewModel = new TimetableDisplayViewModel
@@ -292,4 +317,4 @@ namespace WebSIMS.Controllers
             }
         }
     }
-} 
+}

@@ -15,5 +15,7 @@ namespace WebSIMS.Interfaces
         Task<bool> ScheduleExistsAsync(int id);
         Task<IEnumerable<TimetableViewModel>> GetTimetableDataAsync();
         Task<IEnumerable<TimetableViewModel>> GetTimetableByWeekAsync(DateTime weekStart);
+        Task<IEnumerable<TimetableViewModel>> GetTimetableDataByStudentUserIdAsync(int userId);
+        Task<IEnumerable<TimetableViewModel>> GetTimetableDataByFacultyUserIdAsync(int userId);
     }
-} 
+}
