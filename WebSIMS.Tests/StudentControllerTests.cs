@@ -40,7 +40,7 @@ namespace WebSIMS.Tests
         {
             // Arrange
             _mockRepo.Setup(repo => repo.GetAllStudentsAsync())
-                .ReturnsAsync(GetTestStudents());
+                .ReturnsAsync(TestStudents);
 
             // Act
             var result = await _controller.Index();
@@ -165,15 +165,12 @@ namespace WebSIMS.Tests
             Assert.Equal(model, viewResult.Model);
         }
 
-        [Fact]
+       
 
-        private List<StudentListViewModel> GetTestStudents()
-        {
-            return new List<StudentListViewModel>
+        private List<StudentListViewModel> TestStudents => new List<StudentListViewModel>
             {
                 new StudentListViewModel { StudentID = 1, Username = "test1", FirstName = "Test", LastName = "One" },
                 new StudentListViewModel { StudentID = 2, Username = "test2", FirstName = "Test", LastName = "Two" }
             };
-        }
     }
 }

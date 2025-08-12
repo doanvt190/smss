@@ -166,5 +166,25 @@ namespace WebSIMS.Repositories
             return await _context.StudentClassEnrollmentsDb
                 .AnyAsync(e => e.StudentID == studentId && e.ClassID == classId && e.Status == "Active");
         }
+
+        public Task<IEnumerable<ClassListViewModel>> GetClassesByStudentUserIdAsync(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<ClassListViewModel>> GetClassesByFacultyUserIdAsync(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsStudentEnrolledInClassByUserIdAsync(int userID, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsFacultyAssignedToClassByUserIdAsync(int userID, int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 } 
