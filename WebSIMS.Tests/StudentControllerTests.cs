@@ -16,12 +16,14 @@ namespace WebSIMS.Tests
     public class StudentControllerTests
     {
         private readonly Mock<IStudentRepository> _mockRepo;
+        private readonly Mock<IUserRepository> _mockUserRepo;
         private readonly StudentController _controller;
 
         public StudentControllerTests()
         {
             _mockRepo = new Mock<IStudentRepository>();
-            _controller = new StudentController(_mockRepo.Object);
+            _mockUserRepo = new Mock<IUserRepository>();
+            _controller = new StudentController(_mockRepo.Object, _mockUserRepo.Object);
             _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext
@@ -164,8 +166,6 @@ namespace WebSIMS.Tests
             var viewResult = Assert.IsType<ViewResult>(result);
             Assert.Equal(model, viewResult.Model);
         }
-
-       
 
         private List<StudentListViewModel> TestStudents => new List<StudentListViewModel>
             {

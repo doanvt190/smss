@@ -86,24 +86,6 @@
                         </nav>
                     </div>
                 }
-                <a class="nav-link @(currentController == "Timetable" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTimetable" aria-expanded="@(currentController == "Timetable" ? "true" : "false")" aria-controls="collapseTimetable">
-                    <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
-                    Timetable
-                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse @(currentController == "Timetable" ? "show" : "")" id="collapseTimetable" aria-labelledby="headingFive" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionTimetable">
-                        @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
-                        {
-                            <a class="nav-link @(currentController == "Timetable" && currentAction == "Create" ? "active" : "collapsed")" href="@Url.Action("Create", "Timetable")">
-                                Create Timetable Entry
-                            </a>
-                        }
-                        <a class="nav-link @(currentController == "Timetable" && currentAction == "Index" ? "active" : "collapsed")" href="@Url.Action("Index", "Timetable")">
-                            View Timetable
-                        </a>
-                    </nav>
-                </div>
             </div>
         </div>
         <div class="sb-sidenav-footer">
