@@ -17,29 +17,27 @@ namespace WebSIMS.Repositories
 
         public async Task<IEnumerable<ClassListViewModel>> GetAllClassesAsync()
         {
-            var classes = await _context.ClassesDb
+            return await _context.ClassesDb
                 .Include(c => c.Course)
                 .Include(c => c.Faculty)
+                .Select(c => new ClassListViewModel
+                {
+                    ClassID = c.ClassID,
+                    ClassName = c.ClassName,
+                    CourseName = c.Course.CourseName,
+                    FacultyName = c.Faculty.FirstName + " " + c.Faculty.LastName,
+                    Semester = c.Semester,
+                    Year = c.Year
+                })
                 .ToListAsync();
-
-            return classes.Select(c => new ClassListViewModel
-            {
-                ClassID = c.ClassID,
-                ClassName = c.ClassName,
-                CourseCode = c.Course?.CourseCode ?? "N/A",
-                CourseName = c.Course?.CourseName ?? "N/A",
-                FacultyName = $"{c.Faculty?.FirstName} {c.Faculty?.LastName}".Trim(),
-                Semester = c.Semester,
-                Year = c.Year
-            });
         }
 
-        public async Task<Classes> GetClassByIdAsync(int id)
+        public async Task<Classes> GetClassByIdAsync(int classId)
         {
             return await _context.ClassesDb
                 .Include(c => c.Course)
                 .Include(c => c.Faculty)
-                .FirstOrDefaultAsync(c => c.ClassID == id);
+                .FirstOrDefaultAsync(c => c.ClassID == classId);
         }
 
         public async Task<bool> CreateClassAsync(Classes classEntity)
@@ -167,24 +165,77 @@ namespace WebSIMS.Repositories
                 .AnyAsync(e => e.StudentID == studentId && e.ClassID == classId && e.Status == "Active");
         }
 
-        public Task<IEnumerable<ClassListViewModel>> GetClassesByStudentUserIdAsync(int userID)
+        public async Task<IEnumerable<ClassListViewModel>> GetClassesByStudentUserIdAsync(int userID)
         {
-            throw new NotImplementedException();
+            var student = await _context.StudentsDb.FirstOrDefaultAsync(s => s.UserID == userID);
+            if (student == null)
+            {
+                return Enumerable.Empty<ClassListViewModel>();
+            }
+
+            return await _context.StudentClassEnrollmentsDb
+                .Where(e => e.StudentID == student.StudentID && e.Status == "Active")
+                .Include(e => e.Class)
+                    .ThenInclude(c => c.Course)
+                .Include(e => e.Class)
+                    .ThenInclude(c => c.Faculty)
+                .Select(e => new ClassListViewModel
+                {
+                    ClassID = e.Class.ClassID,
+                    ClassName = e.Class.ClassName,
+                    CourseName = e.Class.Course.CourseName,
+                    FacultyName = e.Class.Faculty.FirstName + " " + e.Class.Faculty.LastName,
+                    Semester = e.Class.Semester,
+                    Year = e.Class.Year
+                })
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<ClassListViewModel>> GetClassesByFacultyUserIdAsync(int userID)
+        public async Task<IEnumerable<ClassListViewModel>> GetClassesByFacultyUserIdAsync(int userID)
         {
-            throw new NotImplementedException();
+            var faculty = await _context.FacultiesDb.FirstOrDefaultAsync(f => f.UserID == userID);
+
+            if (faculty == null)
+            {
+                return Enumerable.Empty<ClassListViewModel>();
+            }
+
+            return await _context.ClassesDb
+                .Where(c => c.FacultyID == faculty.FacultyID)
+                .Include(c => c.Course)
+                .Include(c => c.Faculty)
+                .Select(c => new ClassListViewModel
+                {
+                    ClassID = c.ClassID,
+                    ClassName = c.ClassName,
+                    CourseName = c.Course.CourseName,
+                    FacultyName = c.Faculty.FirstName + " " + c.Faculty.LastName,
+                    Semester = c.Semester,
+                    Year = c.Year
+                })
+                .ToListAsync();
         }
 
-        public Task<bool> IsStudentEnrolledInClassByUserIdAsync(int userID, int id)
+        public async Task<bool> IsStudentEnrolledInClassByUserIdAsync(int userID, int id)
         {
-            throw new NotImplementedException();
+            var student = await _context.StudentsDb.FirstOrDefaultAsync(s => s.UserID == userID);
+            if (student == null)
+            {
+                return false;
+            }
+            return await _context.StudentClassEnrollmentsDb
+                .AnyAsync(e => e.StudentID == student.StudentID && e.ClassID == id && e.Status == "Active");
         }
 
-        public Task<bool> IsFacultyAssignedToClassByUserIdAsync(int userID, int id)
+        public async Task<bool> IsFacultyAssignedToClassByUserIdAsync(int userID, int id)
         {
-            throw new NotImplementedException();
+            var faculty = await _context.FacultiesDb.FirstOrDefaultAsync(f => f.UserID == userID);
+            if (faculty == null)
+            {
+                return false;
+            }
+            var classEntity = await _context.ClassesDb.FindAsync(id);
+            return classEntity?.FacultyID == faculty.FacultyID;
         }
     }
-} 
+}

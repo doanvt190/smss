@@ -15,16 +15,15 @@ namespace WebSIMS.BDContext.Entities
         [Column("CourseName", TypeName = "nvarchar(100)"), Required]
         public string CourseName { get; set; }
 
-        [Column("Description", TypeName = "nvarchar(200)"), AllowNull]
-        public string Description { get; set; }
+        [Column("Description", TypeName = "nvarchar(200)")]
+        public string? Description { get; set; }
 
         [Column("Credits", TypeName = "integer")]
-        public int Credits { get; set; }
+        public int? Credits { get; set; }
 
-        [Column("Department", TypeName = "nvarchar(100)"), AllowNull]
-        public string Department { get; set; }
+        [Column("Department", TypeName = "nvarchar(100)")]
+        public string? Department { get; set; }
 
-        [AllowNull]
         public DateTime? CreatedAt { get; set; }
     }
 }

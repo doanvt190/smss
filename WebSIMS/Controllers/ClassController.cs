@@ -58,7 +58,7 @@ namespace WebSIMS.Controllers
         }
 
         // GET: Class/Create
-        [Authorize(Roles = "Admin,Faculty")] // Admin and Faculty can create classes
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             try
@@ -92,7 +92,7 @@ namespace WebSIMS.Controllers
         // POST: Class/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Faculty")] // Admin and Faculty can create classes
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateClassViewModel model)
         {
             if (ModelState.IsValid)
@@ -324,7 +324,7 @@ namespace WebSIMS.Controllers
         }
 
         // GET: Class/Enroll/5
-        [Authorize(Roles = "Admin,Faculty")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Enroll(int id)
         {
             try
@@ -360,7 +360,7 @@ namespace WebSIMS.Controllers
         // POST: Class/Enroll/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Faculty")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Enroll(int id, EnrollStudentViewModel model)
         {
             if (ModelState.IsValid)
@@ -446,7 +446,7 @@ namespace WebSIMS.Controllers
         // POST: Class/RemoveEnrollment/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Faculty")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveEnrollment(int enrollmentId, int classId)
         {
             try

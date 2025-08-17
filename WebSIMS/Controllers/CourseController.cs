@@ -29,7 +29,7 @@ namespace WebSIMS.Controllers
                     CourseCode = c.CourseCode,
                     CourseName = c.CourseName,
                     Description = c.Description,
-                    Credits = c.Credits,
+                    Credits = (int)c.Credits,
                     Department = c.Department,
                     CreatedAt = c.CreatedAt
                 }).ToList();
@@ -113,7 +113,7 @@ namespace WebSIMS.Controllers
                 CourseCode = course.CourseCode,
                 CourseName = course.CourseName,
                 Description = course.Description,
-                Credits = course.Credits,
+                Credits = (int)course.Credits,
                 Department = course.Department,
                 CreatedAt = course.CreatedAt
             };
@@ -136,7 +136,7 @@ namespace WebSIMS.Controllers
                 CourseCode = course.CourseCode,
                 CourseName = course.CourseName,
                 Description = course.Description,
-                Credits = course.Credits,
+                Credits = (int)course.Credits,
                 Department = course.Department
             };
 

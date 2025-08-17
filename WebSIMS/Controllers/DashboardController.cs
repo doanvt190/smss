@@ -23,12 +23,16 @@ namespace WebSIMS.Controllers
             {
                 SchoolName = "BTEC FPT School",
                 SchoolDescription = "A leading institution providing high-quality education in technology and business",
-                TotalAdmins = await _context.UsersDb.CountAsync(u => u.Role == "Admin"),
-                TotalStudents = await _context.StudentsDb.CountAsync(),
-                TotalFaculty = await _context.FacultiesDb.CountAsync(),
-                TotalCourses = await _context.CoursesDb.CountAsync(),
-                TotalClasses = await _context.ClassesDb.CountAsync(),
-                RecentStudents = await _context.StudentsDb
+            };
+
+            if (User.IsInRole("Admin"))
+            {
+                dashboardViewModel.TotalAdmins = await _context.UsersDb.CountAsync(u => u.Role == "Admin");
+                dashboardViewModel.TotalStudents = await _context.StudentsDb.CountAsync();
+                dashboardViewModel.TotalFaculty = await _context.FacultiesDb.CountAsync();
+                dashboardViewModel.TotalCourses = await _context.CoursesDb.CountAsync();
+                dashboardViewModel.TotalClasses = await _context.ClassesDb.CountAsync();
+                dashboardViewModel.RecentStudents = await _context.StudentsDb
                     .OrderByDescending(s => s.EnrollmentDate)
                     .Take(5)
                     .Select(s => new StudentSummary
@@ -38,8 +42,9 @@ namespace WebSIMS.Controllers
                         Program = s.Program,
                         EnrollmentDate = s.EnrollmentDate
                     })
-                    .ToListAsync(),
-                RecentFaculty = await _context.FacultiesDb
+                    .ToListAsync();
+
+                dashboardViewModel.RecentFaculty = await _context.FacultiesDb
                     .OrderByDescending(f => f.HireDate)
                     .Take(5)
                     .Select(f => new FacultySummary
@@ -49,8 +54,40 @@ namespace WebSIMS.Controllers
                         Department = f.Department,
                         HireDate = f.HireDate
                     })
-                    .ToListAsync()
-            };
+                    .ToListAsync();
+            }
+            else if (User.IsInRole("Faculty"))
+            {
+                var facultyUser = await _context.UsersDb.FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
+                if (facultyUser != null)
+                {
+                    var faculty = await _context.FacultiesDb.FirstOrDefaultAsync(f => f.UserID == facultyUser.UserID);
+                    if (faculty != null)
+                    {
+                        var studentIdsInFacultyClasses = await _context.StudentClassEnrollmentsDb
+                            .Where(e => e.Class.FacultyID == faculty.FacultyID)
+                            .Select(e => e.StudentID)
+                            .Distinct()
+                            .ToListAsync();
+
+                        dashboardViewModel.TotalStudents = studentIdsInFacultyClasses.Count;
+                        dashboardViewModel.TotalClasses = await _context.ClassesDb.CountAsync(c => c.FacultyID == faculty.FacultyID);
+
+                        dashboardViewModel.RecentStudents = await _context.StudentsDb
+                            .Where(s => studentIdsInFacultyClasses.Contains(s.StudentID))
+                            .OrderByDescending(s => s.EnrollmentDate)
+                            .Take(5)
+                            .Select(s => new StudentSummary
+                            {
+                                Name = $"{s.FirstName} {s.LastName}",
+                                Email = s.Email,
+                                Program = s.Program,
+                                EnrollmentDate = s.EnrollmentDate
+                            })
+                            .ToListAsync();
+                    }
+                }
+            }
 
             return View(dashboardViewModel);
         }

@@ -14,9 +14,9 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Dashboard
                 </a>
-                @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+                <div class="sb-sidenav-menu-heading">Management</div>
+                @if (User.IsInRole("Admin"))
                 {
-                    <div class="sb-sidenav-menu-heading">Management</div>
                     <a class="nav-link @(currentController == "Student" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="@(currentController == "Student" ? "true" : "false")" aria-controls="collapseLayouts">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         Students
@@ -24,32 +24,26 @@
                     </a>
                     <div class="collapse @(currentController == "Student" ? "show" : "")" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <a class="nav-link @(currentController == "Student" && currentAction == "Create" ? "active" : "")" href="@Url.Action("Create", "Student")">Create new Student</a>
-                            }
+                            <a class="nav-link @(currentController == "Student" && currentAction == "Create" ? "active" : "")" href="@Url.Action("Create", "Student")">Create new Student</a>
                             <a class="nav-link @(currentController == "Student" && currentAction == "Index" ? "active" : "")" href="@Url.Action("Index", "Student")">Student Lists</a>
                         </nav>
                     </div>
-                }
-                <a class="nav-link @(currentController == "Course" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="@(currentController == "Course" ? "true" : "false")" aria-controls="collapsePages">
-                    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                    Courses
-                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse @(currentController == "Course" ? "show" : "")" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                        @if (User.IsInRole("Admin"))
-                        {
+                    <a class="nav-link @(currentController == "Course" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="@(currentController == "Course" ? "true" : "false")" aria-controls="collapsePages">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                        Courses
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse @(currentController == "Course" ? "show" : "")" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                             <a class="nav-link @(currentController == "Course" && currentAction == "Create" ? "active" : "collapsed")" href="@Url.Action("Create", "Course")">
                                 Create new Course
                             </a>
-                        }
-                        <a class="nav-link @(currentController == "Course" && currentAction == "Index" ? "active" : "collapsed")" href="@Url.Action("Index", "Course")">
-                            Course Lists
-                        </a>
-                    </nav>
-                </div>
+                            <a class="nav-link @(currentController == "Course" && currentAction == "Index" ? "active" : "collapsed")" href="@Url.Action("Index", "Course")">
+                                Course Lists
+                            </a>
+                        </nav>
+                    </div>
+                }
                 <a class="nav-link @(currentController == "Class" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClasses" aria-expanded="@(currentController == "Class" ? "true" : "false")" aria-controls="collapseClasses">
                     <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                     Classes
@@ -57,7 +51,7 @@
                 </a>
                 <div class="collapse @(currentController == "Class" ? "show" : "")" id="collapseClasses" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionClasses">
-                        @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+                        @if (User.IsInRole("Admin"))
                         {
                             <a class="nav-link @(currentController == "Class" && currentAction == "Create" ? "active" : "collapsed")" href="@Url.Action("Create", "Class")">
                                 Create new Class
@@ -86,24 +80,6 @@
                         </nav>
                     </div>
                 }
-                <a class="nav-link @(currentController == "Timetable" ? "" : "collapsed")" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTimetable" aria-expanded="@(currentController == "Timetable" ? "true" : "false")" aria-controls="collapseTimetable">
-                    <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
-                    Timetable
-                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse @(currentController == "Timetable" ? "show" : "")" id="collapseTimetable" aria-labelledby="headingFive" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionTimetable">
-                        @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
-                        {
-                            <a class="nav-link @(currentController == "Timetable" && currentAction == "Create" ? "active" : "collapsed")" href="@Url.Action("Create", "Timetable")">
-                                Create Timetable Entry
-                            </a>
-                        }
-                        <a class="nav-link @(currentController == "Timetable" && currentAction == "Index" ? "active" : "collapsed")" href="@Url.Action("Index", "Timetable")">
-                            View Timetable
-                        </a>
-                    </nav>
-                </div>
             </div>
         </div>
         <div class="sb-sidenav-footer">
