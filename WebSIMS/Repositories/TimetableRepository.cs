@@ -164,5 +164,15 @@ namespace WebSIMS.Repositories
 
             return timetableData;
         }
+
+        public Task<IEnumerable<TimetableViewModel>> GetTimetableDataByStudentUserIdAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<TimetableViewModel>> GetTimetableDataByFacultyUserIdAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 } 

@@ -17,5 +17,9 @@ namespace WebSIMS.Interfaces
         Task<bool> RemoveEnrollmentAsync(int enrollmentId);
         Task<IEnumerable<ClassEnrollmentViewModel>> GetClassEnrollmentsAsync(int classId);
         Task<bool> IsStudentEnrolledAsync(int studentId, int classId);
+        Task<IEnumerable<ClassListViewModel>> GetClassesByStudentUserIdAsync(int userID);
+        Task<IEnumerable<ClassListViewModel>> GetClassesByFacultyUserIdAsync(int userID);
+        Task<bool> IsStudentEnrolledInClassByUserIdAsync(int userID, int id);
+        Task<bool> IsFacultyAssignedToClassByUserIdAsync(int userID, int id);
     }
 } 

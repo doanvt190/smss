@@ -131,5 +131,20 @@ namespace WebSIMS.Repositories
         {
             return await _context.UsersDb.AnyAsync(u => u.Username == username);
         }
+
+        public Task<Students?> GetStudentByUserIdAsync(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<StudentListViewModel>> GetStudentsByFacultyUserIdAsync(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsStudentInFacultyClassesAsync(int id, int userID)
+        {
+            throw new NotImplementedException();
+        }
     }
 } 

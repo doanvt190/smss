@@ -14,5 +14,8 @@ namespace WebSIMS.Interfaces
         Task<bool> DeleteStudentAsync(int studentId);
         Task<bool> StudentExistsAsync(string email);
         Task<bool> UsernameExistsAsync(string username);
+        Task<Students?> GetStudentByUserIdAsync(int userID);
+        Task<IEnumerable<StudentListViewModel>> GetStudentsByFacultyUserIdAsync(int userID);
+        Task<bool> IsStudentInFacultyClassesAsync(int id, int userID);
     }
-} 
+}
