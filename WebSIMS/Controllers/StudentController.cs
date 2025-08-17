@@ -21,18 +21,9 @@ namespace WebSIMS.Controllers
             _userRepository = userRepository;
         }
 
-        public StudentController(IStudentRepository @object)
-        {
-        }
-
-        public Task<IActionResult> Index()
-        {
-            return Index(_studentRepository);
-        }
-
         // GET: Student
         [Authorize(Roles = "Admin,Faculty")] // All authenticated users can view the list
-        public async Task<IActionResult> Index(IStudentRepository studentRepo)
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -57,11 +48,11 @@ namespace WebSIMS.Controllers
                 IEnumerable<StudentListViewModel> students;
                 if (User.IsInRole("Faculty"))
                 {
-                    students = await studentRepo.GetStudentsByFacultyUserIdAsync(user.UserID);
+                    students = await _studentRepository.GetStudentsByFacultyUserIdAsync(user.UserID);
                 }
                 else // Admin
                 {
-                    students = await studentRepo.GetAllStudentsAsync();
+                    students = await _studentRepository.GetAllStudentsAsync();
                 }
 
                 return View(students);
