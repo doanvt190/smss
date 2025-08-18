@@ -136,70 +136,51 @@
             </div>
         </div>
     }
-
-    <!-- Recent Activity Section -->
-    <div class="row">
-        <!-- Recent Students -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Students</h6>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
-                    {
-                        <a href="@Url.Action("Index", "Student")" class="btn btn-sm btn-primary">
-                            <i class="fas fa-eye"></i> View All
-                        </a>
-                    }
+    else if (User.IsInRole("Student"))
+    {
+        <!-- Student Dashboard: Show Active Classes and Courses -->
+        <div class="row mb-4">
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-secondary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                    Active Classes
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalClasses</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    @if (Model.RecentStudents.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Program</th>
-                                        <th>Enrollment Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var student in Model.RecentStudents)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                        <i class="fas fa-user text-white"></i>
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold">@student.Name</div>
-                                                        <small class="text-muted">@student.Email</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>@(student.Program ?? "Not specified")</td>
-                                            <td>@(student.EnrollmentDate?.ToString("MMM dd, yyyy") ?? "Not specified")</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+            </div>
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Courses you are in
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCourses</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-book fa-2x text-gray-300"></i>
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No recent students found</p>
-                        </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
+    }
 
-        <!-- Recent Faculty (hidden for Student role) -->
-        @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
-        {
+    <!-- Recent Faculty (hidden for Student role) -->
+    @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+    {
+        <div class="row">
             <div class="col-xl-6 col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -253,8 +234,8 @@
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
 
 <style>

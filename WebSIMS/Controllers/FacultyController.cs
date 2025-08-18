@@ -157,10 +157,10 @@ namespace WebSIMS.Controllers
                     faculty.Department = model.Department;
                     faculty.HireDate = model.HireDate;
 
-                    _facultyRepository.UpdateFacultyAsync(faculty);
+                    await _facultyRepository.UpdateFacultyAsync(faculty);
                     await _facultyRepository.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "Faculty member updated successfully.";
+                    TempData["SuccessMessage"] = "Faculty updated successfully!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)

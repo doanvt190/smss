@@ -88,6 +88,27 @@ namespace WebSIMS.Controllers
                     }
                 }
             }
+            else if (User.IsInRole("Student"))
+            {
+                var studentUser = await _context.UsersDb.FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
+                if (studentUser != null)
+                {
+                    var student = await _context.StudentsDb.FirstOrDefaultAsync(s => s.UserID == studentUser.UserID);
+                    if (student != null)
+                    {
+                        // Active classes for this student
+                        dashboardViewModel.TotalClasses = await _context.StudentClassEnrollmentsDb
+                            .CountAsync(e => e.StudentID == student.StudentID && e.Status == "Active");
+
+                        // Courses for this student (distinct courses from active classes)
+                        dashboardViewModel.TotalCourses = await _context.StudentClassEnrollmentsDb
+                            .Where(e => e.StudentID == student.StudentID && e.Status == "Active")
+                            .Select(e => e.Class.CourseID)
+                            .Distinct()
+                            .CountAsync();
+                    }
+                }
+            }
 
             return View(dashboardViewModel);
         }

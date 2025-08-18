@@ -80,6 +80,13 @@
                         </nav>
                     </div>
                 }
+                @if (User.IsInRole("Student"))
+                {
+                    <a class="nav-link @(currentController == "Course" ? "active" : "collapsed")" href="@Url.Action("Index", "Course")">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                        Courses
+                    </a>
+                }
             </div>
         </div>
         <div class="sb-sidenav-footer">
