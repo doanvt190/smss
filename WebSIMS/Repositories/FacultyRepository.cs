@@ -43,6 +43,7 @@ namespace WebSIMS.Repositories
         public async Task UpdateFacultyAsync(Faculties faculty)
         {
             _context.FacultiesDb.Update(faculty);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteFacultyAsync(int id)
@@ -59,4 +60,4 @@ namespace WebSIMS.Repositories
             await _context.SaveChangesAsync();
         }
     }
-} 
+}

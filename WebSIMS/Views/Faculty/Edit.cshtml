@@ -1,4 +1,4 @@
-@model WebSIMS.Models.CreateFacultyViewModel
+@model WebSIMS.Models.EditFacultyViewModel
 
 @{
     ViewData["Title"] = "Edit Faculty";
@@ -19,7 +19,8 @@
             Edit Faculty Member
         </div>
         <div class="card-body">
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit" method="post" asp-route-id="@Model.FacultyID">
+                <input type="hidden" asp-for="FacultyID" />
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                 
                 <div class="row">
@@ -98,4 +99,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 
+}

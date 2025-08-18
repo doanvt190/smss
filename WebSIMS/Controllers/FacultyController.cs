@@ -120,9 +120,10 @@ namespace WebSIMS.Controllers
                 return NotFound();
             }
 
-            var viewModel = new CreateFacultyViewModel
+            var viewModel = new EditFacultyViewModel
             {
-                Username = faculty.User?.Username ?? "",
+                FacultyID = faculty.FacultyID,
+                Username = faculty.User?.Username ?? string.Empty,
                 FirstName = faculty.FirstName,
                 LastName = faculty.LastName,
                 Email = faculty.Email,
@@ -138,8 +139,13 @@ namespace WebSIMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, CreateFacultyViewModel model)
+        public async Task<IActionResult> Edit(int id, EditFacultyViewModel model)
         {
+            if (id != model.FacultyID)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -158,14 +164,13 @@ namespace WebSIMS.Controllers
                     faculty.HireDate = model.HireDate;
 
                     await _facultyRepository.UpdateFacultyAsync(faculty);
-                    await _facultyRepository.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "Faculty updated successfully!";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch
                 {
-                    ModelState.AddModelError("", "An error occurred while updating the faculty member.");
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the faculty member.");
                 }
             }
 
