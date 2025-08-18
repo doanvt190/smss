@@ -10,6 +10,7 @@ namespace WebSIMS.Interfaces
         Task AddFacultyAsync(Faculties faculty);
         Task UpdateFacultyAsync(Faculties faculty);
         Task DeleteFacultyAsync(int id);
+        Task<bool> FacultyEmailExistsAsync(string email, int excludeFacultyId);
         Task SaveChangesAsync();
     }
-} 
+}

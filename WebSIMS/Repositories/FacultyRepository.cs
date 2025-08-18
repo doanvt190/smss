@@ -55,6 +55,11 @@ namespace WebSIMS.Repositories
             }
         }
 
+        public async Task<bool> FacultyEmailExistsAsync(string email, int excludeFacultyId)
+        {
+            return await _context.FacultiesDb.AnyAsync(f => f.Email == email && f.FacultyID != excludeFacultyId);
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

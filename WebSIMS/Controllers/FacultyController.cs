@@ -5,6 +5,7 @@ using WebSIMS.Services;
 using WebSIMS.BDContext.Entities;
 using WebSIMS.Interfaces;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebSIMS.Controllers
 {
@@ -156,6 +157,14 @@ namespace WebSIMS.Controllers
                         return NotFound();
                     }
 
+                    // Email uniqueness check
+                    if (!string.Equals(faculty.Email, model.Email, StringComparison.OrdinalIgnoreCase) &&
+                        await _facultyRepository.FacultyEmailExistsAsync(model.Email, faculty.FacultyID))
+                    {
+                        ModelState.AddModelError("Email", "Email already exists.");
+                        return View(model);
+                    }
+
                     faculty.FirstName = model.FirstName;
                     faculty.LastName = model.LastName;
                     faculty.Email = model.Email;
@@ -167,6 +176,10 @@ namespace WebSIMS.Controllers
 
                     TempData["SuccessMessage"] = "Faculty updated successfully!";
                     return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("Email", "Email already exists (constraint).");
                 }
                 catch
                 {
