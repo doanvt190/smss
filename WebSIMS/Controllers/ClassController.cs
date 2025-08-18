@@ -443,7 +443,7 @@ namespace WebSIMS.Controllers
             }
         }
 
-        // POST: Class/RemoveEnrollment/5
+        // POST: Class/zRemoveEnrollment/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

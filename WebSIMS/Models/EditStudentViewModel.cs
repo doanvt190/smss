@@ -11,6 +11,16 @@ namespace WebSIMS.Models
         [Display(Name = "Username")]
         public string Username { get; set; }
 
+        [Display(Name = "New Password")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long")]
+        [DataType(DataType.Password)]
+        public string? NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm New Password")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string? ConfirmNewPassword { get; set; }
+
         [Required(ErrorMessage = "First name is required")]
         [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
         [Display(Name = "First Name")]

@@ -249,6 +249,10 @@ namespace WebSIMS.Controllers
 
                     // Update user properties
                     studentToUpdate.User.Username = model.Username;
+                    if (!string.IsNullOrWhiteSpace(model.NewPassword))
+                    {
+                        studentToUpdate.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                    }
 
                     // Update student properties
                     studentToUpdate.FirstName = model.FirstName;
