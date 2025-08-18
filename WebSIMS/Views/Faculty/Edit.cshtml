@@ -35,9 +35,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" value="••••••••" readonly />
-                            <small class="form-text text-muted">Password changes are not available in this view</small>
+                            <label asp-for="NewPassword" class="form-label"></label>
+                            <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
+                            <small class="form-text text-muted">Password must be at least 8 characters and contain upper, lower, digit and special character.</small>
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ConfirmNewPassword" class="form-label"></label>
+                            <input asp-for="ConfirmNewPassword" class="form-control" autocomplete="new-password" />
+                            <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
                         </div>
                     </div>
 

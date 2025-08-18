@@ -14,6 +14,7 @@ namespace WebSIMS.Models
         [Display(Name = "New Password")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long")]
         [DataType(DataType.Password)]
+        [StrongPassword]
         public string? NewPassword { get; set; }
 
         [DataType(DataType.Password)]

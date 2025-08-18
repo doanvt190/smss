@@ -13,10 +13,11 @@ namespace WebSIMS.Models
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [StrongPassword]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Confirm password is required")]
-        [Compare("Password", ErrorMessage = "Password and confirm password do not match")]
+        [Required(ErrorMessage = "Repeat password is required")]
+        [Compare("Password", ErrorMessage = "Repeat password must match the password")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
@@ -50,4 +51,4 @@ namespace WebSIMS.Models
         [DataType(DataType.Date)]
         public DateTime? HireDate { get; set; }
     }
-} 
+}

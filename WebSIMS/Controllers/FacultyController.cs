@@ -157,7 +157,6 @@ namespace WebSIMS.Controllers
                         return NotFound();
                     }
 
-                    // Email uniqueness check
                     if (!string.Equals(faculty.Email, model.Email, StringComparison.OrdinalIgnoreCase) &&
                         await _facultyRepository.FacultyEmailExistsAsync(model.Email, faculty.FacultyID))
                     {
@@ -171,6 +170,12 @@ namespace WebSIMS.Controllers
                     faculty.Phone = model.Phone;
                     faculty.Department = model.Department;
                     faculty.HireDate = model.HireDate;
+
+                    if (!string.IsNullOrWhiteSpace(model.NewPassword))
+                    {
+                        // Strong password is validated by model attribute
+                        faculty.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                    }
 
                     await _facultyRepository.UpdateFacultyAsync(faculty);
 

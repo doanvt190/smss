@@ -10,6 +10,16 @@ namespace WebSIMS.Models
         [Display(Name = "Username")]
         public string Username { get; set; }
 
+        [Display(Name = "New Password")]
+        [DataType(DataType.Password)]
+        [StrongPassword]
+        public string? NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Repeat New Password")]
+        [Compare("NewPassword", ErrorMessage = "Repeat password must match the password")]
+        public string? ConfirmNewPassword { get; set; }
+
         [Required(ErrorMessage = "First name is required")]
         [StringLength(50)]
         [Display(Name = "First Name")]
