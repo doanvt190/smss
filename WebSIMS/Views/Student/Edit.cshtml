@@ -41,16 +41,17 @@
                                     <label asp-for="NewPassword" class="form-label"></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                        <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
+                                        <input asp-for="NewPassword" class="form-control password-input" autocomplete="new-password" />
+                                        <button class="btn btn-outline-secondary password-toggle" type="button" data-target="NewPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
                                     </div>
-                                    <div class="mt-2">
-                                        <div class="progress" style="height: 5px;">
-                                            <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <small id="password-strength-text" class="form-text"></small>
+                                    <div class="pw-meter mt-2" id="pw-meter">
+                                        <div class="pw-meter-fill" id="pw-meter-fill"></div>
                                     </div>
+                                    <small id="password-strength-text" class="form-text text-muted"></small>
+                                    <small class="text-muted d-block mt-1">Leave blank to keep current password. New password must be at least 8 characters and contain upper, lower, digit and special character.</small>
                                     <span asp-validation-for="NewPassword" class="text-danger"></span>
-                                    <small class="text-muted">Leave blank to keep the current password</small>
                                 </div>
                             </div>
                         </div>
@@ -169,45 +170,21 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
-
     <script>
-        $(document).ready(function() {
-            var passwordField = $('#NewPassword');
-            var strengthBar = $('#password-strength-bar');
-            var strengthText = $('#password-strength-text');
-
-            // Show strength on blur (when user leaves the field)
-            passwordField.on('blur', function() {
-                var password = $(this).val();
-
-                if (password === "") {
-                    strengthBar.css('width', '0%');
-                    strengthText.text('');
-                    return;
-                }
-
-                var result = zxcvbn(password);
-                var score = result.score;
-                var scorePercentage = (score + 1) * 20;
-                
-                var color = 'bg-danger';
-                var text = 'Very Weak';
-                if (score >= 1) { color = 'bg-warning'; text = 'Weak'; }
-                if (score >= 2) { color = 'bg-info'; text = 'Medium'; }
-                if (score >= 3) { color = 'bg-primary'; text = 'Strong'; }
-                if (score >= 4) { color = 'bg-success'; text = 'Very Strong'; }
-
-                strengthBar.removeClass('bg-danger bg-warning bg-info bg-primary bg-success').addClass(color);
-                strengthBar.css('width', scorePercentage + '%');
-                strengthText.text('Strength: ' + text);
-            });
-
-            // Clear strength meter on focus (when user clicks back in)
-            passwordField.on('focus', function() {
-                strengthBar.css('width', '0%');
-                strengthText.text('');
-            });
-        });
+        (function(){
+            const pwd = document.getElementById('NewPassword');
+            const meterFill = document.getElementById('pw-meter-fill');
+            const strengthText = document.getElementById('password-strength-text');
+            const toggleBtn = document.querySelector('.password-toggle');
+            function classify(p){ const len=p.length; const hasLower=/[a-z]/.test(p); const hasUpper=/[A-Z]/.test(p); const hasDigit=/\d/.test(p); const hasSpecial=/[^A-Za-z0-9]/.test(p); const cats=[hasLower,hasUpper,hasDigit,hasSpecial].filter(Boolean).length; if(len < 8){ if(cats <=1) return {level:0,label:'Very Weak'}; return {level:1,label:'Weak'}; } if(cats <=1) return {level:1,label:'Weak'}; if(cats===2) return {level:2,label:'Normal'}; if(cats===3) return {level:3,label:'Strong'}; return {level:4,label:'Very Strong'}; }
+            const colors=['#dc3545','#fd7e14','#ffc107','#0d6efd','#198754']; const widths=[15,35,55,80,100];
+            function update(){ const val=pwd.value; if(!val){ meterFill.style.width='0%'; strengthText.textContent=''; return;} const res=classify(val); meterFill.style.width=widths[res.level]+'%'; meterFill.style.background=colors[res.level]; strengthText.textContent='Strength: '+res.label; }
+            pwd.addEventListener('input', update);
+            if(toggleBtn){ toggleBtn.addEventListener('click',()=>{ const icon=toggleBtn.querySelector('i'); if(pwd.type==='password'){ pwd.type='text'; icon.classList.replace('fa-eye','fa-eye-slash'); } else { pwd.type='password'; icon.classList.replace('fa-eye-slash','fa-eye'); } }); }
+        })();
     </script>
+    <style>
+        .pw-meter{background:#e9ecef;border-radius:4px;overflow:hidden;height:8px;width:100%;}
+        .pw-meter-fill{height:100%;width:0%;background:#dc3545;transition:width .35s ease, background .35s ease;}
+    </style>
 }
