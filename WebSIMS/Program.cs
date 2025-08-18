@@ -21,7 +21,6 @@ namespace WebSIMS
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
-            builder.Services.AddScoped<ITimetableRepository, TimetableRepository>();
             builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
             builder.Services.AddScoped<UserService>();
 
